@@ -6,35 +6,36 @@ const catData = document.querySelector('.cat-info');
 const loader = document.querySelector('.loader-text');
 
 const toggleLoader = () => {
-  loader.classList.toggle('hidden')
-}
+  loader.classList.toggle('hidden');
+};
 
-toggleLoader()
+toggleLoader();
 
 fetchBreeds()
   .then(res => {
-    const arr = res.map(
+    const arr = res.data.map(
       el =>
         `
-  <option value="${el.id}"">
-     ${el.name}
-  </option>
-  `
+          <option value="${el.id}"">
+            ${el.name}
+          </option>
+        `
     );
     list.insertAdjacentHTML('beforeend', arr.join(''));
   })
-  .catch(err => {
+  .catch(() => {
     Notify.failure(`Oops! Something went wrong! Try reloading the page!`);
-  }).finally(() => toggleLoader())
+  })
+  .finally(() => toggleLoader());
 
 list.addEventListener('change', el => {
-toggleLoader()
+  toggleLoader();
   catData.innerHTML = '';
   fetchCatByBreed(el.target.value)
     .then(res => {
-      const { alt_names, name, description, temperament } = res[0].breeds[0];
+      const { alt_names, name, description, temperament } = res.data[0].breeds[0];
       const data = `
-      <img src="${res[0].url}" alt="${alt_names}" width=500 height=500 />
+      <img src="${res.data[0].url}" alt="${alt_names}" width=500 height=500 />
       <div class="cat-content">
         <h1 class="cat-title">${name}</h1>
         <p class="cat-text">${description}</p>
@@ -48,5 +49,3 @@ toggleLoader()
     )
     .finally(() => toggleLoader());
 });
-
-
